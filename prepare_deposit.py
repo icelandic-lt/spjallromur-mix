@@ -69,8 +69,16 @@ Full license text: https://creativecommons.org/licenses/by/4.0/legalcode
 """
 
 CODE_README_TEXT = (
-    "Mixing pipeline: https://github.com/icelandic-lt/spjallromur-mix\n\n"
-    "Archive this repository at release tag v1.0.0 and place the zip here before deposit.\n"
+    "Mixing pipeline: https://github.com/icelandic-lt/spjallromur-mix\n"
+    "\n"
+    "Archive this repository at release tag v1.0.0 and place it in this directory\n"
+    "before deposit, named exactly:\n"
+    "\n"
+    "    spjallromur-mix-1.0.0.zip\n"
+    "\n"
+    "This is the source archive GitHub generates for that tag:\n"
+    "https://github.com/icelandic-lt/spjallromur-mix/archive/refs/tags/v1.0.0.zip\n"
+    "Its root directory is spjallromur-mix-1.0.0/.\n"
 )
 
 METADATA_COLUMNS = [
