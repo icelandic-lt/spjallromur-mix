@@ -69,7 +69,7 @@ Full license text: https://creativecommons.org/licenses/by/4.0/legalcode
 """
 
 CODE_README_TEXT = (
-    "Mixing pipeline: https://github.com/jgudnason/spjallromur-mix\n\n"
+    "Mixing pipeline: https://github.com/icelandic-lt/spjallromur-mix\n\n"
     "Archive this repository at release tag v1.0.0 and place the zip here before deposit.\n"
 )
 
