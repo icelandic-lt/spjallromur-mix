@@ -10,5 +10,6 @@ venv/
 .claude/settings.local.json
 output*/
 .DS_Store
+**/.DS_Store
 *.png
 .vscode/
