@@ -363,4 +363,4 @@ original, unverified CLARIN ones.
 
 - [ ] Confirm sample rate of all Spjallrómur sessions (assumed 16 kHz; session
       `198f2863` is a known exception — see Known Session Anomalies)
-- [ ] Assign a version string and DOI for the pipeline release
+- [x] Assign a version string and DOI for the pipeline release — version `1.0.0`, DOI [10.5281/zenodo.22725064](https://doi.org/10.5281/zenodo.22725064)
