@@ -15,7 +15,7 @@ alignment outcome:
     <session_id>/      WAV (renamed to v2 stem) + v2 JSON transcript
 
 Top-level: README.md, LICENSE, evaluation_of_alignment.md, metadata.tsv,
-           annotations/manual_transcripts_20260326.json,
+           annotations/manual_transcripts.json,
            code/README.txt.
 """
 
@@ -481,18 +481,17 @@ def main():
     write_metadata_tsv(metadata_path, all_metadata)
     print(f"Written metadata.tsv ({len(all_metadata)} rows)")
 
-    # 6. annotations/manual_transcripts_20260326.json
-    # Date tag reflects when these transcriptions were completed and first
-    # released (Spjallrómur 26.03).  Future annotation batches get their own
-    # date-tagged file alongside this one.
+    # 6. annotations/manual_transcripts.json
+    # Deposited under its plain name, matching the corpus source.  Any future
+    # annotation batch is deposited as its own separately named file.
     # The corpus is expected to supply manual_transcripts.json already
     # anonymised; the pipeline does no anonymisation of its own.
     manual_src = next(corpus_root.rglob("manual_transcripts.json"), None)
     if manual_src is not None:
         annotations_dir = deposit_root / "annotations"
         annotations_dir.mkdir(parents=True, exist_ok=True)
-        copy_file(manual_src, annotations_dir / "manual_transcripts_20260326.json")
-        print("Copied annotations/manual_transcripts_20260326.json")
+        copy_file(manual_src, annotations_dir / "manual_transcripts.json")
+        print("Copied annotations/manual_transcripts.json")
     else:
         print(
             "  WARNING: manual_transcripts.json not found under corpus-root; "
