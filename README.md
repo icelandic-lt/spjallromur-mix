@@ -111,6 +111,11 @@ Each session folder in the pipeline output directory contains:
 - `b_<session_id>_<age>_<gender>_aligned.json` — aligned transcript, Speaker B
 - `<session_id>_transcript_merged.json` — both speakers interleaved by time
 
+The deposit also carries the corpus's manual transcriptions at
+`annotations/manual_transcripts.json`. These are copied verbatim and their
+timestamps are **not** remapped onto the mixed timeline — see
+[DESIGN.md](DESIGN.md) and the generated `annotations/README.txt` for the detail.
+
 ## Corpus statistics
 
 ```bash

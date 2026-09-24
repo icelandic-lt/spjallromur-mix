@@ -49,9 +49,12 @@ structure — `full_conversations/` (48 sessions) and `half_conversations/`
 transcripts and pipeline outputs alongside them, and writes `metadata.tsv`, a
 CC BY 4.0 `LICENSE`, `annotations/`, and `code/README.txt`.
 
-The manual transcript annotations are copied from the corpus as-is. The corpus is
-expected to supply `manual_transcripts.json` already anonymised; the pipeline does
-no anonymisation of its own. `EXCLUDED_FILENAMES` names files that must never be
+The manual transcript annotations are copied from the corpus as-is — including
+their timestamps, which are **not** remapped onto the mixed timeline (see Known
+Session Anomalies). `annotations/README.txt` is generated alongside them to state
+this where a user of the deposit will find it. The corpus is expected to supply
+`manual_transcripts.json` already anonymised; the pipeline does no anonymisation
+of its own. `EXCLUDED_FILENAMES` names files that must never be
 deposited, enforced at the single copy choke point and reported when they are
 skipped.
 
@@ -349,6 +352,32 @@ voices and audio artefacts.
 No correction is applied deliberately: adding a resampling step would introduce
 further artefacts, and leaving the audio at its recorded rate gives downstream
 pipelines the raw signal to work with along with full documentation of the issue.
+
+### Manual transcriptions are on a different timeline from the mixed audio
+
+`annotations/manual_transcripts.json` carries human transcriptions for 21 of the
+full conversations. Stage 3 copies the file verbatim; **no timestamp remapping is
+applied to it**, and the pipeline has no stage that does so.
+
+For most entries the turn times refer to the original per-channel recordings, made
+before drift correction, so they run progressively out of step with
+`<session_id>_mixed.wav`. Measured across the 21 sessions, the discrepancy at the
+end of a conversation averages about 7 s, exceeds 1 s in 14 of them, and reaches
+~80 s for `2c1b4416` (4.4% drift).
+
+Two complications rule out a blanket correction:
+
+- The `speaker_a` / `speaker_b` labels do not always correspond to channels a and
+  b. Five of the 28 transcript entries are inverted, all of them from the
+  transcriber who diarised from a mixed recording.
+- A minority of entries were evidently timed against an already drift-corrected
+  mix and need no correction at all, so a uniform remap would break them while
+  fixing the rest.
+
+Correcting these requires a per-entry determination of both the label mapping and
+the source timeline, which is out of scope for the current pipeline. The
+forced-alignment transcripts (`*_aligned.json`, `*_transcript_merged.json`) are
+the time-aligned transcripts for the mixed audio.
 
 ### `2a139f9b` — no v2 transcript
 

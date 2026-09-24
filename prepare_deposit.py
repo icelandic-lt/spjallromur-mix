@@ -15,7 +15,7 @@ alignment outcome:
     <session_id>/      WAV (renamed to v2 stem) + v2 JSON transcript
 
 Top-level: README.md, LICENSE, evaluation_of_alignment.md, metadata.tsv,
-           annotations/manual_transcripts.json,
+           annotations/manual_transcripts.json + README.txt,
            code/README.txt.
 """
 
@@ -80,6 +80,48 @@ CODE_README_TEXT = (
     "https://github.com/icelandic-lt/spjallromur-mix/archive/refs/tags/v1.0.0.zip\n"
     "Its root directory is spjallromur-mix-1.0.0/.\n"
 )
+
+ANNOTATIONS_README_TEXT = """\
+manual_transcripts.json
+=======================
+
+Manual (human) transcriptions of a subset of the full conversations, copied
+from the Spjallromur corpus unchanged.  This pipeline does not modify them.
+
+IMPORTANT - TIMELINE
+--------------------
+The turn timestamps in manual_transcripts.json do NOT refer to the mixed audio
+in this deposit (<session_id>_mixed.wav).
+
+The mixed audio is drift-corrected: the two channels of each conversation were
+recorded on independent clocks, and the shorter channel has been resampled to
+match the longer one (see resample_ratio in each session_params.json).  The
+manual transcriptions, for most entries, were timed against the original
+per-channel recordings made before that correction.
+
+As a result the manual turn times run progressively out of step with the mixed
+audio.  Across the 21 sessions that carry manual transcriptions the discrepancy
+at the end of a conversation is about 7 seconds on average, exceeds 1 second in
+14 of them, and reaches roughly 80 seconds in the worst case (2c1b4416, which
+has 4.4% clock drift).
+
+A minority of entries appear instead to have been timed against an already
+drift-corrected mix, so the offset is not uniform and cannot be removed by
+applying a single correction to the file as a whole.
+
+Note also that the speaker_a / speaker_b labels used in manual_transcripts.json
+do not always correspond to channels a and b of the recording.
+
+FOR WORK AGAINST THE MIXED AUDIO
+--------------------------------
+Use the forced-alignment transcripts, which share the mixed timeline exactly:
+
+  <speaker>_<session_id>_<age>_<gender>_aligned.json   per speaker
+  <session_id>_transcript_merged.json                  both speakers, merged
+
+These are produced by the mixing pipeline and their timestamps are remapped
+onto the mixed audio.  See code/README.txt for the pipeline source.
+"""
 
 METADATA_COLUMNS = [
     "session_id",
@@ -492,6 +534,12 @@ def main():
         annotations_dir.mkdir(parents=True, exist_ok=True)
         copy_file(manual_src, annotations_dir / "manual_transcripts.json")
         print("Copied annotations/manual_transcripts.json")
+        # The manual transcriptions are on a different timeline from the mixed
+        # audio shipped beside them; say so where a user will find it.
+        (annotations_dir / "README.txt").write_text(
+            ANNOTATIONS_README_TEXT, encoding="utf-8"
+        )
+        print("Written annotations/README.txt")
     else:
         print(
             "  WARNING: manual_transcripts.json not found under corpus-root; "
