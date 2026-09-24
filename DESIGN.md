@@ -22,7 +22,7 @@ per-session parameter files — are released alongside the code.
 
 ## Architecture
 
-The pipeline is divided into three independent stages.
+The pipeline is divided into four independent stages.
 
 ### Stage 1 — Analysis (`analyse.py`)
 
@@ -39,7 +39,24 @@ the correction specified in the parameter file to align the two channels, writes
 mixed stereo WAV, and writes corrected transcript JSON files. Stage 2 can be run
 blindly on any session for which a valid parameter file exists.
 
-### Stage 3 — Deposit (`prepare_deposit.py`)
+### Stage 3 — Manual transcript alignment (`align_manual_transcripts.py`)
+
+Remaps the corpus manual transcriptions onto the mixed timeline, writing
+`<output_root>/manual_transcripts_aligned.json`. Optional: Stage 4 warns and
+continues if it has not been run.
+
+Two things vary per transcript entry and are determined from the data rather than
+assumed — which recording channel each turn belongs to (the `speaker_a` /
+`speaker_b` labels are inverted in five of the 28 entries), and which timeline the
+turn times refer to (most predate drift correction; a few were timed against an
+already-corrected mix). Both are resolved by scoring turns against the
+forced-alignment word timings. Turns on the resampled channel are scaled by
+`resample_ratio`; reference-channel turns are never modified.
+
+Each output entry carries an `alignment` block recording the decision, the scores
+behind it, the ratio applied and a before/after agreement score.
+
+### Stage 4 — Deposit (`prepare_deposit.py`)
 
 Assembles the CLARIN v2 deposit directory from three read-only inputs: the CLARIN
 corpus (`--corpus-root`), the v2 transcript release (`--transcript-root`), and the
@@ -49,10 +66,10 @@ structure — `full_conversations/` (48 sessions) and `half_conversations/`
 transcripts and pipeline outputs alongside them, and writes `metadata.tsv`, a
 CC BY 4.0 `LICENSE`, `annotations/`, and `code/README.txt`.
 
-The manual transcript annotations are copied from the corpus as-is — including
-their timestamps, which are **not** remapped onto the mixed timeline (see Known
-Session Anomalies). `annotations/README.txt` is generated alongside them to state
-this where a user of the deposit will find it. The corpus is expected to supply
+The corpus manual transcriptions are copied as-is, keeping the original citable,
+and the Stage 3 output is deposited beside them as
+`annotations/manual_transcripts_aligned.json`. `annotations/README.txt` is
+generated to explain the difference where a user of the deposit will find it. The corpus is expected to supply
 `manual_transcripts.json` already anonymised; the pipeline does no anonymisation
 of its own. `EXCLUDED_FILENAMES` names files that must never be
 deposited, enforced at the single copy choke point and reported when they are
@@ -356,28 +373,28 @@ pipelines the raw signal to work with along with full documentation of the issue
 ### Manual transcriptions are on a different timeline from the mixed audio
 
 `annotations/manual_transcripts.json` carries human transcriptions for 21 of the
-full conversations. Stage 3 copies the file verbatim; **no timestamp remapping is
-applied to it**, and the pipeline has no stage that does so.
-
-For most entries the turn times refer to the original per-channel recordings, made
-before drift correction, so they run progressively out of step with
-`<session_id>_mixed.wav`. Measured across the 21 sessions, the discrepancy at the
-end of a conversation averages about 7 s, exceeds 1 s in 14 of them, and reaches
+full conversations. It is deposited verbatim, and its turn times refer to the
+original per-channel recordings, made before drift correction. Against
+`<session_id>_mixed.wav` they run progressively out of step — averaging about 7 s
+at the end of a conversation, exceeding 1 s in 14 of the 21 sessions, and reaching
 ~80 s for `2c1b4416` (4.4% drift).
 
-Two complications rule out a blanket correction:
+Stage 3 addresses this by producing `annotations/manual_transcripts_aligned.json`,
+which carries the same transcriptions on the mixed timeline. The original is kept
+unmodified so it remains citable.
+
+Two complications ruled out a blanket correction and are handled per entry:
 
 - The `speaker_a` / `speaker_b` labels do not always correspond to channels a and
-  b. Five of the 28 transcript entries are inverted, all of them from the
-  transcriber who diarised from a mixed recording.
-- A minority of entries were evidently timed against an already drift-corrected
-  mix and need no correction at all, so a uniform remap would break them while
-  fixing the rest.
+  b. Five of the 28 entries are inverted, all from the transcriber who diarised
+  from a mixed recording.
+- A minority of entries were timed against an already drift-corrected mix and need
+  no correction; a uniform remap would have broken them.
 
-Correcting these requires a per-entry determination of both the label mapping and
-the source timeline, which is out of scope for the current pipeline. The
-forced-alignment transcripts (`*_aligned.json`, `*_transcript_merged.json`) are
-the time-aligned transcripts for the mixed audio.
+Of the 28 entries, 24 were remapped and 4 correctly needed none. Agreement with
+the forced alignment improved for every remapped entry and regressed for none. The
+aligned timestamps are derived rather than hand-checked, and inherit the accuracy
+of the forced alignment used to place them.
 
 ### `2a139f9b` — no v2 transcript
 

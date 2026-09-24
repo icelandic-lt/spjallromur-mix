@@ -42,4 +42,4 @@ jobs:
     # cleanly against the pinned dependency set.
     - name: Smoke test - imports resolve
       run: |
-        python -c "import analyse; import synthesise; import prepare_deposit"
+        python -c "import analyse; import synthesise; import align_manual_transcripts; import prepare_deposit"

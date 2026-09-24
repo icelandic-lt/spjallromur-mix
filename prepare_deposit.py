@@ -15,7 +15,8 @@ alignment outcome:
     <session_id>/      WAV (renamed to v2 stem) + v2 JSON transcript
 
 Top-level: README.md, LICENSE, evaluation_of_alignment.md, metadata.tsv,
-           annotations/manual_transcripts.json + README.txt,
+           annotations/ (manual_transcripts.json,
+           manual_transcripts_aligned.json, README.txt),
            code/README.txt.
 """
 
@@ -82,45 +83,69 @@ CODE_README_TEXT = (
 )
 
 ANNOTATIONS_README_TEXT = """\
-manual_transcripts.json
-=======================
+Manual transcriptions
+=====================
 
-Manual (human) transcriptions of a subset of the full conversations, copied
-from the Spjallromur corpus unchanged.  This pipeline does not modify them.
+Human transcriptions of a subset of the full conversations.  Two files are
+provided; they differ only in their turn timestamps.
 
-IMPORTANT - TIMELINE
---------------------
-The turn timestamps in manual_transcripts.json do NOT refer to the mixed audio
-in this deposit (<session_id>_mixed.wav).
+  manual_transcripts.json
+      The corpus original, copied unchanged.  Turn times refer to the ORIGINAL
+      per-channel recordings, made before drift correction.
 
+  manual_transcripts_aligned.json
+      The same transcriptions with turn times remapped onto the mixed audio
+      in this deposit (<session_id>_mixed.wav).  Use this one when working
+      against the mixed WAVs.
+
+WHY TWO FILES
+-------------
 The mixed audio is drift-corrected: the two channels of each conversation were
 recorded on independent clocks, and the shorter channel has been resampled to
 match the longer one (see resample_ratio in each session_params.json).  The
-manual transcriptions, for most entries, were timed against the original
-per-channel recordings made before that correction.
+manual transcriptions were, for most entries, timed before that correction, so
+against the mixed audio their turn times run progressively out of step -- by
+about 7 seconds on average at the end of a conversation, and by roughly 80
+seconds in the worst case (2c1b4416, which has 4.4% clock drift).
 
-As a result the manual turn times run progressively out of step with the mixed
-audio.  Across the 21 sessions that carry manual transcriptions the discrepancy
-at the end of a conversation is about 7 seconds on average, exceeds 1 second in
-14 of them, and reaches roughly 80 seconds in the worst case (2c1b4416, which
-has 4.4% clock drift).
+manual_transcripts.json is kept unmodified so the corpus original remains
+available and citable.  manual_transcripts_aligned.json is derived from it.
 
-A minority of entries appear instead to have been timed against an already
-drift-corrected mix, so the offset is not uniform and cannot be removed by
-applying a single correction to the file as a whole.
+HOW THE ALIGNED FILE WAS PRODUCED
+---------------------------------
+Two things had to be determined per transcript entry rather than assumed:
 
-Note also that the speaker_a / speaker_b labels used in manual_transcripts.json
-do not always correspond to channels a and b of the recording.
+  - Which recording channel each turn belongs to.  The speaker_a / speaker_b
+    labels are not reliable; five of the 28 entries are inverted with respect
+    to the WAV channels, all from the transcriber who diarised from a mixed
+    recording.
 
-FOR WORK AGAINST THE MIXED AUDIO
---------------------------------
-Use the forced-alignment transcripts, which share the mixed timeline exactly:
+  - Which timeline the turn times refer to.  Most entries predate the drift
+    correction; a few were timed against an already-corrected mix and needed
+    no change at all.
 
-  <speaker>_<session_id>_<age>_<gender>_aligned.json   per speaker
-  <session_id>_transcript_merged.json                  both speakers, merged
+Both were resolved by scoring the turns against the forced-alignment word
+timings, which record when each channel actually carried speech.  Turns on the
+resampled channel were then scaled by resample_ratio; turns on the reference
+channel are never modified, because alignment does not move that channel.
 
-These are produced by the mixing pipeline and their timestamps are remapped
-onto the mixed audio.  See code/README.txt for the pipeline source.
+Of the 28 entries, 24 were remapped and 4 correctly needed no change (2 were
+already aligned, 2 come from sessions with zero measured drift).  Agreement
+with the forced alignment improved for every remapped entry and regressed for
+none.  Turn text, speaker labels and turn counts are unchanged throughout.
+
+Each entry in manual_transcripts_aligned.json carries an "alignment" block
+recording the decision taken, the scores behind it, the ratio applied and a
+before/after agreement score, so any individual entry can be audited.
+
+CAVEAT
+------
+The aligned timestamps are derived, not hand-checked.  They inherit the
+accuracy of the forced alignment used to place them, and the per-entry scores
+in the "alignment" block are the best available estimate of their quality.
+For the per-speaker forced-alignment transcripts themselves, see
+<speaker>_<session_id>_<age>_<gender>_aligned.json and
+<session_id>_transcript_merged.json in each session folder.
 """
 
 METADATA_COLUMNS = [
@@ -536,6 +561,16 @@ def main():
         print("Copied annotations/manual_transcripts.json")
         # The manual transcriptions are on a different timeline from the mixed
         # audio shipped beside them; say so where a user will find it.
+        aligned_src = output_root / "manual_transcripts_aligned.json"
+        if aligned_src.exists():
+            copy_file(aligned_src, annotations_dir / aligned_src.name)
+            print(f"Copied annotations/{aligned_src.name}")
+        else:
+            print(
+                "  WARNING: manual_transcripts_aligned.json not found under "
+                "output-root; run align_manual_transcripts.py to produce it",
+                file=sys.stderr,
+            )
         (annotations_dir / "README.txt").write_text(
             ANNOTATIONS_README_TEXT, encoding="utf-8"
         )

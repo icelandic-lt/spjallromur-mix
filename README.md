@@ -94,7 +94,13 @@ python synthesise.py \
     --output-root /path/to/output \
     --sessions 2a07b3a7,01119679
 
-# Stage 3: assemble the CLARIN v2 deposit directory
+# Stage 3: remap the manual transcriptions onto the mixed timeline
+python align_manual_transcripts.py \
+    --corpus-root /path/to/clarin/spjallromur \
+    --transcript-root /path/to/spjallromur-v2 \
+    --output-root /path/to/output
+
+# Stage 4: assemble the CLARIN v2 deposit directory
 python prepare_deposit.py \
     --corpus-root /path/to/clarin/spjallromur \
     --transcript-root /path/to/spjallromur-v2 \
@@ -111,10 +117,11 @@ Each session folder in the pipeline output directory contains:
 - `b_<session_id>_<age>_<gender>_aligned.json` — aligned transcript, Speaker B
 - `<session_id>_transcript_merged.json` — both speakers interleaved by time
 
-The deposit also carries the corpus's manual transcriptions at
-`annotations/manual_transcripts.json`. These are copied verbatim and their
-timestamps are **not** remapped onto the mixed timeline — see
-[DESIGN.md](DESIGN.md) and the generated `annotations/README.txt` for the detail.
+The deposit also carries the corpus's manual transcriptions, in two forms:
+`annotations/manual_transcripts.json` (the corpus original, copied verbatim, on
+the original per-channel timeline) and `annotations/manual_transcripts_aligned.json`
+(the same transcriptions remapped onto the mixed timeline). See
+[DESIGN.md](DESIGN.md) and the generated `annotations/README.txt`.
 
 ## Corpus statistics
 
