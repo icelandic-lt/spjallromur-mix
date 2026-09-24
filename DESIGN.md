@@ -41,7 +41,7 @@ blindly on any session for which a valid parameter file exists.
 
 ### Stage 3 — Manual transcript alignment (`align_manual_transcripts.py`)
 
-Remaps the corpus manual transcriptions onto the mixed timeline, writing
+Added in `1.1.0`. Remaps the corpus manual transcriptions onto the mixed timeline, writing
 `<output_root>/manual_transcripts_aligned.json`. Optional: Stage 4 warns and
 continues if it has not been run.
 
@@ -405,8 +405,24 @@ original, unverified CLARIN ones.
 
 ---
 
+## Releases
+
+| Version | Contents |
+|---|---|
+| `1.0.0` | Stages 1, 2 and the deposit stage. Produced the mixed audio, the aligned forced-alignment transcripts and the per-session parameter files. |
+| `1.1.0` | Adds `align_manual_transcripts.py` (Stage 3) and `annotations/manual_transcripts_aligned.json`. Stages 1 and 2 are unchanged and reproduce the same audio and transcripts byte for byte. |
+
+`session_params.json` records `pipeline_version: "1.0.0"` because that data was
+produced by the 1.0.0 pipeline and is bit-identical under 1.1.0; restamping it
+would alter already-deposited files for no informational gain.
+`manual_transcripts_aligned.json` records `1.1.0`, the version that produced it.
+
+---
+
 ## Open Items
 
 - [ ] Confirm sample rate of all Spjallrómur sessions (assumed 16 kHz; session
       `198f2863` is a known exception — see Known Session Anomalies)
-- [x] Assign a version string and DOI for the pipeline release — version `1.0.0`, DOI [10.5281/zenodo.22725064](https://doi.org/10.5281/zenodo.22725064)
+- [x] Assign a version string and DOI for the pipeline release — `1.0.0`, DOI
+      [10.5281/zenodo.22725064](https://doi.org/10.5281/zenodo.22725064)
+- [ ] Mint a DOI for `1.1.0` (see Releases)

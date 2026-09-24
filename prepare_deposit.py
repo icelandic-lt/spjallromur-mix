@@ -69,18 +69,26 @@ Under the following terms:
 Full license text: https://creativecommons.org/licenses/by/4.0/legalcode
 """
 
-CODE_README_TEXT = (
-    "Mixing pipeline: https://github.com/icelandic-lt/spjallromur-mix\n"
-    "\n"
-    "Archive this repository at release tag v1.0.0 and place it in this directory\n"
-    "before deposit, named exactly:\n"
-    "\n"
-    "    spjallromur-mix-1.0.0.zip\n"
-    "\n"
-    "This is the source archive GitHub generates for that tag:\n"
-    "https://github.com/icelandic-lt/spjallromur-mix/archive/refs/tags/v1.0.0.zip\n"
-    "Its root directory is spjallromur-mix-1.0.0/.\n"
-)
+CODE_README_TEXT = """\
+Mixing pipeline: https://github.com/icelandic-lt/spjallromur-mix
+
+Two source archives are included:
+
+    spjallromur-mix-1.1.0.zip    current release
+    spjallromur-mix-1.0.0.zip    retained for provenance
+
+v1.0.0 produced the mixed audio (<session_id>_mixed.wav), the aligned
+forced-alignment transcripts and the per-session parameter files.
+
+v1.1.0 adds align_manual_transcripts.py, which produced
+annotations/manual_transcripts_aligned.json.  It is otherwise unchanged in
+behaviour: re-running it reproduces the same audio and transcripts byte for
+byte, so both archives describe the same corpus.
+
+Each file is the source archive GitHub generates for that release tag, e.g.
+https://github.com/icelandic-lt/spjallromur-mix/archive/refs/tags/v1.1.0.zip
+Its root directory is spjallromur-mix-1.1.0/.
+"""
 
 ANNOTATIONS_README_TEXT = """\
 Manual transcriptions

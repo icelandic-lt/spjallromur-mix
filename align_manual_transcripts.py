@@ -40,7 +40,11 @@ from pathlib import Path
 
 from synthesise import load_transcript
 
-PIPELINE_VERSION = "1.0.0"
+# Stamped into manual_transcripts_aligned.json.  analyse.py keeps writing
+# "1.0.0" into session_params.json: that data was produced by the 1.0.0
+# pipeline and is bit-identical, so restamping it would churn deposited
+# files for no informational gain.
+PIPELINE_VERSION = "1.1.0"
 
 # Minimum separation between the best and second-best hypothesis for a decision
 # to count as confident.  Entries whose channel attribution is ambiguous are
