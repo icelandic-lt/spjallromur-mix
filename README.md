@@ -7,6 +7,7 @@ conversational Icelandic corpus, and assembling the CLARIN deposit directory.
 ![Python](https://img.shields.io/badge/python-3.11-blue?logo=python&logoColor=white)
 ![Python](https://img.shields.io/badge/python-3.12-blue?logo=python&logoColor=white)
 [![CI Status](https://github.com/icelandic-lt/spjallromur-mix/actions/workflows/ci.yml/badge.svg)](https://github.com/icelandic-lt/spjallromur-mix/actions/workflows/ci.yml)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22725063.svg)](https://doi.org/10.5281/zenodo.22725063)
 
 ## Overview
 
@@ -149,6 +150,18 @@ resource paper).
 
 Statistics are derived from forced-alignment timestamps, so small alignment
 errors propagate into the overlap and gap estimates.
+
+## Citation
+
+Archived on Zenodo. Cite the concept DOI to refer to the pipeline in general —
+it always resolves to the latest version:
+
+> [10.5281/zenodo.22725063](https://doi.org/10.5281/zenodo.22725063)
+
+To pin a specific release, use its own DOI: `1.1.0` is
+[10.5281/zenodo.22941439](https://doi.org/10.5281/zenodo.22941439) and `1.0.0` is
+[10.5281/zenodo.22725064](https://doi.org/10.5281/zenodo.22725064). See
+[DESIGN.md](DESIGN.md) for what changed between them.
 
 ## Licence
 

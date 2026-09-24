@@ -407,10 +407,14 @@ original, unverified CLARIN ones.
 
 ## Releases
 
-| Version | Contents |
-|---|---|
-| `1.0.0` | Stages 1, 2 and the deposit stage. Produced the mixed audio, the aligned forced-alignment transcripts and the per-session parameter files. |
-| `1.1.0` | Adds `align_manual_transcripts.py` (Stage 3) and `annotations/manual_transcripts_aligned.json`. Stages 1 and 2 are unchanged and reproduce the same audio and transcripts byte for byte. |
+| Version | DOI | Contents |
+|---|---|---|
+| `1.0.0` | [10.5281/zenodo.22725064](https://doi.org/10.5281/zenodo.22725064) | Stages 1, 2 and the deposit stage. Produced the mixed audio, the aligned forced-alignment transcripts and the per-session parameter files. |
+| `1.1.0` | [10.5281/zenodo.22941439](https://doi.org/10.5281/zenodo.22941439) | Adds `align_manual_transcripts.py` (Stage 3) and `annotations/manual_transcripts_aligned.json`. Stages 1 and 2 are unchanged and reproduce the same audio and transcripts byte for byte. |
+
+To cite the pipeline in general, use the concept DOI
+[10.5281/zenodo.22725063](https://doi.org/10.5281/zenodo.22725063), which always
+resolves to the latest version. The per-version DOIs above pin a specific release.
 
 `session_params.json` records `pipeline_version: "1.0.0"` because that data was
 produced by the 1.0.0 pipeline and is bit-identical under 1.1.0; restamping it
@@ -423,6 +427,6 @@ would alter already-deposited files for no informational gain.
 
 - [ ] Confirm sample rate of all Spjallrómur sessions (assumed 16 kHz; session
       `198f2863` is a known exception — see Known Session Anomalies)
-- [x] Assign a version string and DOI for the pipeline release — `1.0.0`, DOI
-      [10.5281/zenodo.22725064](https://doi.org/10.5281/zenodo.22725064)
-- [ ] Mint a DOI for `1.1.0` (see Releases)
+- [x] Assign a version string and DOI for the pipeline release — concept DOI
+      [10.5281/zenodo.22725063](https://doi.org/10.5281/zenodo.22725063); see
+      Releases for per-version DOIs
